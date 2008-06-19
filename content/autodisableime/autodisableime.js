@@ -29,7 +29,7 @@ var AutoDisableIME = {
 
 		window.__autodisableime__BrowserCustomizeToolbar = window.BrowserCustomizeToolbar;
 		window.BrowserCustomizeToolbar = function() {
-			AutoDisableIME.destroyLiteners();
+			AutoDisableIME.destroyListeners();
 			window.__autodisableime__BrowserCustomizeToolbar.call(window);
 		};
 
@@ -58,7 +58,7 @@ var AutoDisableIME = {
 	destroy : function() 
 	{
 		window.removeEventListener('unload', this, false);
-		this.destroyLiteners();
+		this.destroyListeners();
 		this.removePrefListener(this);
 	},
   
