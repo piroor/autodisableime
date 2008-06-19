@@ -1,0 +1,3 @@
+content	autodisableime	jar:chrome/autodisableime.jar!/content/autodisableime/
+
+overlay	chrome://browser/content/browser.xul	chrome://autodisableime/content/autodisableime.xul
