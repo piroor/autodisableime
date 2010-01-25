@@ -9,9 +9,9 @@ var AutoDisableIME = {
 	isLinux : (navigator.platform.toLowerCase().indexOf('linux') > -1),
 
 	enabledForURLBar : false,
-	 
+	
 /* Utilities */ 
-	 
+	
 	get urlbar() 
 	{
 		return document.getElementById('urlbar');
@@ -19,7 +19,7 @@ var AutoDisableIME = {
 	urlbarPopups : ['PopupAutoCompleteRichResult', 'PopupAutoComplete'],
   
 /* Initializing */ 
-	 
+	
 	init : function() 
 	{
 		if (!('gBrowser' in window)) return;
@@ -64,7 +64,7 @@ var AutoDisableIME = {
   
 /* main */ 
 	initialized : false,
-	 
+	
 	initListeners : function() 
 	{
 		if (this.initialized) return;
@@ -113,7 +113,7 @@ var AutoDisableIME = {
 			aTarget.removeAttribute(aSelf.IMEAttribute);
 		}, 10, this, aEvent.currentTarget);
 	},
-	onFieldBlur : function(aEvent) 
+	onFieldBlur : function(aEvent)
 	{
 		if (!this.isLinux) return;
 
@@ -129,7 +129,7 @@ var AutoDisableIME = {
 		if (this.urlbarPopups.indexOf(aEvent.currentTarget.id) > -1)
 			this.urlbar.removeAttribute(this.IMEAttribute);
 	},
-	onAutoCompleteHidden : function(aEvent) 
+	onAutoCompleteHidden : function(aEvent)
 	{
 		if (this.isLinux) return;
 
@@ -138,11 +138,12 @@ var AutoDisableIME = {
 				aSelf.urlbar.setAttribute(aSelf.IMEAttribute, true);
 		}, 10, this, aEvent.currentTarget);
 	},
- 	 
+  
 /* event handling */ 
-	 
+	
 	domain : 'extensions.autodisableime', 
-	observe : function(aSubject, aTopic, aData)
+ 
+	observe : function(aSubject, aTopic, aData) 
 	{
 		if (aTopic != 'nsPref:changed') return;
 
@@ -185,83 +186,10 @@ var AutoDisableIME = {
 				this.onAutoCompleteHidden(aEvent);
 				return;
 		}
-	},
-  
-/* Save/Load Prefs */ 
-	 
-	get Prefs() 
-	{
-		delete this.Prefs;
-		this.Prefs = Components
-						.classes['@mozilla.org/preferences;1']
-						.getService(Components.interfaces.nsIPrefBranch)
-						.QueryInterface(Components.interfaces.nsIPrefBranchInternal);
-		return this.Prefs;
-	},
- 
-	getPref : function(aPrefstring) 
-	{
-		switch (this.Prefs.getPrefType(aPrefstring))
-		{
-			case this.Prefs.PREF_STRING:
-				return decodeURIComponent(escape(this.Prefs.getCharPref(aPrefstring)));
-
-			case this.Prefs.PREF_INT:
-				return this.Prefs.getIntPref(aPrefstring);
-
-			case this.Prefs.PREF_BOOL:
-				return this.Prefs.getBoolPref(aPrefstring);
-
-			case this.Prefs.PREF_INVALID:
-			default:
-				return null;
-		}
-	},
- 
-	setPref : function(aPrefstring, aNewValue) 
-	{
-		switch (typeof aNewValue)
-		{
-			case 'string':
-				return this.Prefs.setCharPref(aPrefstring, unescape(encodeURIComponent(aNewValue)));
-
-			case 'number':
-				return this.Prefs.setIntPref(aPrefstring, parseInt(aNewValue));
-
-			default:
-				return this.Prefs.setBoolPref(aPrefstring, aNewValue);
-		}
-	},
- 
-	clearPref : function(aPrefstring) 
-	{
-		if (this.Prefs.prefHasUserValue(aPrefstring))
-			this.Prefs.clearUserPref(aPrefstring);
-	},
- 
-	addPrefListener : function(aObserver) 
-	{
-		var domains = ('domains' in aObserver) ? aObserver.domains : [aObserver.domain] ;
-		try {
-			for each (var domain in domains)
-				this.Prefs.addObserver(domain, aObserver, false);
-		}
-		catch(e) {
-		}
-	},
- 
-	removePrefListener : function(aObserver) 
-	{
-		var domains = ('domains' in aObserver) ? aObserver.domains : [aObserver.domain] ;
-		try {
-			for each (var domain in domains)
-				this.Prefs.removeObserver(domain, aObserver, false);
-		}
-		catch(e) {
-		}
 	}
    
 }; 
+AutoDisableIME.__proto__ = window['piro.sakura.ne.jp'].prefs;
 
 window.addEventListener('load', AutoDisableIME, false);
  
