@@ -222,16 +222,14 @@ var AutoDisableIME = {
 		switch (typeof aNewValue)
 		{
 			case 'string':
-				this.Prefs.setCharPref(aPrefstring, unescape(encodeURIComponent(aNewValue)));
-				break;
+				return this.Prefs.setCharPref(aPrefstring, unescape(encodeURIComponent(aNewValue)));
+
 			case 'number':
-				this.Prefs.setIntPref(aPrefstring, parseInt(aNewValue));
-				break;
+				return this.Prefs.setIntPref(aPrefstring, parseInt(aNewValue));
+
 			default:
-				this.Prefs.setBoolPref(aPrefstring, aNewValue);
-				break;
+				return this.Prefs.setBoolPref(aPrefstring, aNewValue);
 		}
-		return true;
 	},
  
 	clearPref : function(aPrefstring) 
