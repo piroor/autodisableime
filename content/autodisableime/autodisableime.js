@@ -189,7 +189,11 @@ var AutoDisableIME = {
 	}
    
 }; 
-AutoDisableIME.__proto__ = window['piro.sakura.ne.jp'].prefs;
+(function() {
+	var namespace = {};
+	Components.utils.import('resource://autodisableime-modules/prefs.js', namespace);
+	AutoDisableIME.__proto__ = namespace.prefs;
+})();
 
 window.addEventListener('load', AutoDisableIME, false);
  
