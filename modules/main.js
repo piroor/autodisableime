@@ -16,8 +16,10 @@ WindowManager.addHandler(handleWindow);
 function shutdown()
 {
 	WindowManager.getWindows(TYPE_BROWSER).forEach(function(aWindow) {
-		if (aWindow.autoDisableIME)
+		if (aWindow.autoDisableIME) {
 			aWindow.autoDisableIME.destroy();
+			delete aWindow.autoDisableIME;
+		}
 	});
 }
 
