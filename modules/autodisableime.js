@@ -1,32 +1,63 @@
-var AutoDisableIME = { 
-	kINACTIVE : '_moz-autodisableime-inactive',
+function AutoDisableIME(aWindow) 
+{
+	this.init(aWindow);
+}
+AutoDisableIME.prototype = {
+	
+	kINACTIVE : '_moz-autodisableime-inactive', 
 	kDISABLED : '_moz-autodisableime-disabled',
+	CSSRules : <![CDATA[
+		@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+		@namespace html url("http://www.w3.org/1999/xhtml");
 
-	get IMEAttribute()
+		*|*[_moz-autodisableime-inactive="true"],
+		*|*[_moz-autodisableime-inactive="true"] *|* {
+			ime-mode: inactive !important;
+		}
+
+		*|*[_moz-autodisableime-disabled="true"]:not([focused="true"]),
+		*|*[_moz-autodisableime-disabled="true"]:not([focused="true"]) *|* {
+			ime-mode: disabled !important;
+		}
+	]]>.toString(),
+ 
+	get IMEAttribute() 
 	{
 		return this.isLinux ? this.kDISABLED : this.kINACTIVE ;
 	},
-	isLinux : (navigator.platform.toLowerCase().indexOf('linux') > -1),
-
-	enabledForURLBar : false,
-	
+	get isLinux()
+	{
+		return this.XULAppInfo.OS == 'Linux';
+	},
+	get XULAppInfo()
+	{
+		return this._XULAppInfo ||
+				(this._XULAppInfo = Cc['@mozilla.org/xre/app-info;1']
+									.getService(Ci.nsIXULAppInfo)
+									.QueryInterface(Ci.nsIXULRuntime));
+	},
+ 
 /* Utilities */ 
 	
 	get urlbar() 
 	{
-		return document.getElementById('urlbar');
+		return this._window.document.getElementById('urlbar');
 	},
 	urlbarPopups : ['PopupAutoCompleteRichResult', 'PopupAutoComplete'],
   
 /* Initializing */ 
 	
-	init : function() 
+	init : function(aWindow) 
 	{
-		if (!('gBrowser' in window)) return;
+		if (!('gBrowser' in aWindow)) return;
+		this._window = aWindow;
 
-		window.removeEventListener('load', this, false);
-		window.addEventListener('unload', this, false);
+		this.loadStyleSheet();
 
+		this._window.removeEventListener('load', this, false);
+		this._window.addEventListener('unload', this, false);
+
+/*
 		window.__autodisableime__BrowserCustomizeToolbar = window.BrowserCustomizeToolbar;
 		window.BrowserCustomizeToolbar = function() {
 			AutoDisableIME.destroyListeners();
@@ -49,25 +80,25 @@ var AutoDisableIME = {
 				AutoDisableIME.initListeners();
 			};
 		}
+*/
 
 		this.initListeners();
-		this.addPrefListener(this);
-		this.observe(null, 'nsPref:changed', 'extensions.autodisableime.urlbar');
 	},
  
 	destroy : function() 
 	{
-		window.removeEventListener('unload', this, false);
+		this.unloadStyleSheet();
+		this._window.removeEventListener('unload', this, false);
 		this.destroyListeners();
-		this.removePrefListener(this);
+		this._window = null;
 	},
   
 /* main */ 
-	initialized : false,
+	listening : false,
 	
 	initListeners : function() 
 	{
-		if (this.initialized) return;
+		if (this.listening) return;
 
 		var self = this;
 		var urlbar = this.urlbar;
@@ -76,18 +107,18 @@ var AutoDisableIME = {
 			urlbar.addEventListener('focus', this, true);
 			urlbar.addEventListener('blur', this, true);
 			this.urlbarPopups.forEach(function(aID) {
-				var popup = document.getElementById(aID);
+				var popup = this._window.document.getElementById(aID);
 				popup.addEventListener('popupshowing', self, false);
 				popup.addEventListener('popuphiding', self, false);
 			});
 		}
 
-		this.initialized = true;
+		this.listening = true;
 	},
  
 	destroyListeners : function() 
 	{
-		if (!this.initialized) return;
+		if (!this.listening) return;
 
 		var self = this;
 		var urlbar = this.urlbar;
@@ -96,20 +127,40 @@ var AutoDisableIME = {
 			urlbar.removeEventListener('focus', this, true);
 			urlbar.removeEventListener('blur', this, true);
 			this.urlbarPopups.forEach(function(aID) {
-				var popup = document.getElementById(aID);
+				var popup = this._window.document.getElementById(aID);
 				popup.removeEventListener('popupshowing', self, false);
 				popup.removeEventListener('popuphiding', self, false);
 			});
 		}
 
-		this.initialized = false;
+		this.listening = false;
+	},
+ 
+	loadStyleSheet : function()
+	{
+		if (this._styleSheetPI)
+			return;
+
+		this._styleSheetPI = this._window.document.createProcessingInstruction(
+			'xml-stylesheet',
+			'href="data:text/css,'+encodeURIComponent(this.CSSRules)+'" type="text/css"'
+		);
+		this._window.document.insertBefore(this._styleSheetPI, this._window.document.documentElement);
+	},
+ 
+	unloadStyleSheet : function()
+	{
+		if (!this._styleSheetPI)
+			return;
+		this._window.document.removeChild(this._styleSheetPI);
+		this._styleSheetPI = null;
 	},
  
 	onFieldFocus : function(aEvent) 
 	{
 		if (!this.isLinux) return;
 
-		window.setTimeout(function(aSelf, aTarget) {
+		this._window.setTimeout(function(aSelf, aTarget) {
 			aTarget.removeAttribute(aSelf.IMEAttribute);
 		}, 10, this, aEvent.currentTarget);
 	},
@@ -117,7 +168,7 @@ var AutoDisableIME = {
 	{
 		if (!this.isLinux) return;
 
-		window.setTimeout(function(aSelf, aTarget) {
+		this._window.setTimeout(function(aSelf, aTarget) {
 			aTarget.setAttribute(aSelf.IMEAttribute, true);
 		}, 10, this, aEvent.currentTarget);
 	},
@@ -133,7 +184,7 @@ var AutoDisableIME = {
 	{
 		if (this.isLinux) return;
 
-		window.setTimeout(function(aSelf, aPopup) {
+		this._window.setTimeout(function(aSelf, aPopup) {
 			if (aSelf.urlbarPopups.indexOf(aPopup.id) > -1)
 				aSelf.urlbar.setAttribute(aSelf.IMEAttribute, true);
 		}, 10, this, aEvent.currentTarget);
@@ -141,59 +192,28 @@ var AutoDisableIME = {
   
 /* event handling */ 
 	
-	domain : 'extensions.autodisableime', 
- 
-	observe : function(aSubject, aTopic, aData) 
-	{
-		if (aTopic != 'nsPref:changed') return;
-
-		var value = this.getPref(aData);
-		switch (aData)
-		{
-			case 'extensions.autodisableime.urlbar':
-				this.enabledForURLBar = value;
-				this.destroyListeners();
-				this.initListeners();
-				break;
-		}
-	},
- 
 	handleEvent : function(aEvent) 
 	{
 		switch (aEvent.type)
 		{
-			case 'load':
-				this.init();
-				return;
-
 			case 'unload':
-				this.destroy();
-				return;
+				return this.destroy();
 
 			case 'focus':
-				this.onFieldFocus(aEvent);
-				return;
+				return this.onFieldFocus(aEvent);
 
 			case 'blur':
-				this.onFieldBlur(aEvent);
-				return;
+				return this.onFieldBlur(aEvent);
 
 			case 'popupshowing':
-				this.onAutoCompleteShown(aEvent);
-				return;
+				return this.onAutoCompleteShown(aEvent);
 
 			case 'popuphiding':
-				this.onAutoCompleteHidden(aEvent);
-				return;
+				return this.onAutoCompleteHidden(aEvent);
 		}
 	}
-   
-}; 
-(function() {
-	var namespace = {};
-	Components.utils.import('resource://autodisableime-modules/prefs.js', namespace);
-	AutoDisableIME.__proto__ = namespace.prefs;
-})();
-
-window.addEventListener('load', AutoDisableIME, false);
+  
+};
  
+exports.AutoDisableIME = AutoDisableIME; 
+  

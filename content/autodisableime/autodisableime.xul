@@ -1,5 +1,0 @@
-<?xml version="1.0"?>
-<?xml-stylesheet href="autodisableime.css"?>
-<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-<script src="autodisableime.js" type="application/javascript"/>
-</overlay>
