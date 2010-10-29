@@ -60,30 +60,7 @@ AutoDisableIME.prototype = {
 		this._window.removeEventListener('load', this, false);
 		this._window.addEventListener('unload', this, false);
 
-/*
-		window.__autodisableime__BrowserCustomizeToolbar = window.BrowserCustomizeToolbar;
-		window.BrowserCustomizeToolbar = function() {
-			AutoDisableIME.destroyListeners();
-			window.__autodisableime__BrowserCustomizeToolbar.call(window);
-		};
-
-		var toolbox = document.getElementById('browser-toolbox') || // Firefox 3
-					document.getElementById('navigator-toolbox'); // Firefox 2
-		if (toolbox.customizeDone) {
-			toolbox.__autodisableime__customizeDone = toolbox.customizeDone;
-			toolbox.customizeDone = function(aChanged) {
-				this.__autodisableime__customizeDone(aChanged);
-				AutoDisableIME.initListeners();
-			};
-		}
-		if ('BrowserToolboxCustomizeDone' in window) {
-			window.__autodisableime__BrowserToolboxCustomizeDone = window.BrowserToolboxCustomizeDone;
-			window.BrowserToolboxCustomizeDone = function(aChanged) {
-				window.__autodisableime__BrowserToolboxCustomizeDone.apply(window, arguments);
-				AutoDisableIME.initListeners();
-			};
-		}
-*/
+		this._window.document.getElementById('navigator-toolbox').addEventListener('DOMAttrModified', this, false);
 
 		this.initListeners();
 	},
@@ -92,6 +69,7 @@ AutoDisableIME.prototype = {
 	{
 		this.unloadStyleSheet();
 		this._window.removeEventListener('unload', this, false);
+		this._window.document.getElementById('navigator-toolbox').removeEventListener('DOMAttrModified', this, false);
 		this.destroyListeners();
 		this._window = null;
 	},
@@ -159,6 +137,14 @@ AutoDisableIME.prototype = {
 		this._styleSheetPI = null;
 	},
  
+	onToolboxCustomizingStateChanged : function(aIsCustomizing) 
+	{
+		if (aIsCustomizing)
+			this.destroyListeners();
+		else
+			this.initListeners();
+	},
+ 
 	onFieldFocus : function(aEvent) 
 	{
 		if (!this.isLinux) return;
@@ -201,6 +187,11 @@ AutoDisableIME.prototype = {
 		{
 			case 'unload':
 				return this.destroy();
+
+			case 'DOMAttrModified':
+				if (aEvent.attrName == 'customizing')
+					this.onToolboxCustomizingStateChanged(aEvent.newValue == 'true');
+				return;
 
 			case 'focus':
 				return this.onFieldFocus(aEvent);
