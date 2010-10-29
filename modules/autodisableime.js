@@ -1,3 +1,5 @@
+var EXPORTED_SYMBOLS = ['AutoDisableIME'];
+ 
 function AutoDisableIME(aWindow) 
 {
 	this.init(aWindow);
@@ -6,7 +8,8 @@ AutoDisableIME.prototype = {
 	
 	kINACTIVE : '_moz-autodisableime-inactive', 
 	kDISABLED : '_moz-autodisableime-disabled',
-	CSSRules : <![CDATA[
+
+	kCSSRules : <![CDATA[
 		@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 		@namespace html url("http://www.w3.org/1999/xhtml");
 
@@ -143,7 +146,7 @@ AutoDisableIME.prototype = {
 
 		this._styleSheetPI = this._window.document.createProcessingInstruction(
 			'xml-stylesheet',
-			'href="data:text/css,'+encodeURIComponent(this.CSSRules)+'" type="text/css"'
+			'href="data:text/css,'+encodeURIComponent(this.kCSSRules)+'" type="text/css"'
 		);
 		this._window.document.insertBefore(this._styleSheetPI, this._window.document.documentElement);
 	},
@@ -214,6 +217,4 @@ AutoDisableIME.prototype = {
 	}
   
 };
- 
-exports.AutoDisableIME = AutoDisableIME; 
   
