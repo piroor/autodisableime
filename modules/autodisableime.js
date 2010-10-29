@@ -88,7 +88,7 @@ AutoDisableIME.prototype = {
 			urlbar.addEventListener('focus', this, true);
 			urlbar.addEventListener('blur', this, true);
 			this.urlbarPopups.forEach(function(aID) {
-				var popup = this._window.document.getElementById(aID);
+				var popup = self._window.document.getElementById(aID);
 				popup.addEventListener('popupshowing', self, false);
 				popup.addEventListener('popuphiding', self, false);
 			});
@@ -108,7 +108,7 @@ AutoDisableIME.prototype = {
 			urlbar.removeEventListener('focus', this, true);
 			urlbar.removeEventListener('blur', this, true);
 			this.urlbarPopups.forEach(function(aID) {
-				var popup = this._window.document.getElementById(aID);
+				var popup = self._window.document.getElementById(aID);
 				popup.removeEventListener('popupshowing', self, false);
 				popup.removeEventListener('popuphiding', self, false);
 			});
