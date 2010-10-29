@@ -189,7 +189,8 @@ AutoDisableIME.prototype = {
 				return this.destroy();
 
 			case 'DOMAttrModified':
-				if (aEvent.attrName == 'customizing')
+				if (aEvent.originalTarget == aEvent.currentTarget &&
+					aEvent.attrName == 'customizing')
 					this.onToolboxCustomizingStateChanged(aEvent.newValue == 'true');
 				return;
 
