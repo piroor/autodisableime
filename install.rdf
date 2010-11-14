@@ -9,8 +9,7 @@
                    em:creator="SHIMODA Hiroshi"
                    em:description="Makes IME disabled automatically."
                    em:homepageURL="http://piro.sakura.ne.jp/xul/autodisableime/"
-                   em:bootstrap="true"
-                   em:unpack="true">
+                   em:bootstrap="true">
 <!--
                    em:iconURL="chrome://viewsourcetab/content/"
 -->
