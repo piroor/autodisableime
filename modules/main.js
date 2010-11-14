@@ -21,5 +21,8 @@ function shutdown()
 			delete aWindow.autoDisableIME;
 		}
 	});
+
+	WindowManager = void(0);
+	AutoDisableIME = void(0);
 }
 
