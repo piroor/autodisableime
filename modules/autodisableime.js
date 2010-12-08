@@ -162,7 +162,8 @@ AutoDisableIME.prototype = {
 	{
 		if (this.isLinux) return;
 
-		if (this.urlbarPopups.indexOf(aEvent.currentTarget.id) > -1)
+		if (this.urlbarPopups.indexOf(aEvent.currentTarget.id) > -1 &&
+			aEvent.currentTarget.input == this.urlbar)
 			this.urlbar.removeAttribute(this.IMEAttribute);
 	},
 	onAutoCompleteHidden : function(aEvent)
@@ -170,7 +171,8 @@ AutoDisableIME.prototype = {
 		if (this.isLinux) return;
 
 		this._window.setTimeout(function(aSelf, aPopup) {
-			if (aSelf.urlbarPopups.indexOf(aPopup.id) > -1)
+			if (aSelf.urlbarPopups.indexOf(aPopup.id) > -1 &&
+				aEvent.currentTarget.input == aSelf.urlbar)
 				aSelf.urlbar.setAttribute(aSelf.IMEAttribute, true);
 		}, 10, this, aEvent.currentTarget);
 	},
