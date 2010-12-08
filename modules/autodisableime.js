@@ -56,12 +56,8 @@ AutoDisableIME.prototype = {
 		this._window = aWindow;
 
 		this.loadStyleSheet();
-
-		this._window.removeEventListener('load', this, false);
 		this._window.addEventListener('unload', this, false);
-
 		this._window.document.getElementById('navigator-toolbox').addEventListener('DOMAttrModified', this, false);
-
 		this.initListeners();
 	},
  
