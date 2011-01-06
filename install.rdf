@@ -10,9 +10,6 @@
                    em:description="Makes IME disabled automatically."
                    em:homepageURL="http://piro.sakura.ne.jp/xul/autodisableime/"
                    em:bootstrap="true">
-<!--
-                   em:iconURL="chrome://viewsourcetab/content/"
--->
 
     <em:updateURL>http://piro.sakura.ne.jp/xul/update.rdf</em:updateURL>
     <em:updateKey>MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDLI43lgUhWE0E7bfiuTrQMKIP53KM3w71VEPc9FxE7YS3Hpr85dC/GgEUDPd6xD7UP7ckzEusN49LCAKoipepxgyAWzQjZ3CzvkD7PWsZFTi7lpj9ytYDysoFwHs0L96i5oiVopNj1NQM2AC0Y5Lr0b6lz2L5ece0/z6monpZXPQIDAQAB</em:updateKey>
@@ -35,7 +32,7 @@
     <em:targetApplication>
       <RDF:Description em:id="{ec8030f7-c20a-464f-9b0e-13a3a9e97384}"
                        em:minVersion="3.6"
-                       em:maxVersion="4.0b8pre" />
+                       em:maxVersion="4.0b9pre" />
     </em:targetApplication>
 
     <em:targetPlatform>WINNT</em:targetPlatform>
