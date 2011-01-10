@@ -172,7 +172,7 @@ AutoDisableIME.prototype = {
 
 		this._window.setTimeout(function(aSelf, aPopup) {
 			if (aSelf.urlbarPopups.indexOf(aPopup.id) > -1 &&
-				aEvent.currentTarget.input == aSelf.urlbar)
+				aPopup.input == aSelf.urlbar)
 				aSelf.urlbar.setAttribute(aSelf.IMEAttribute, true);
 		}, 10, this, aEvent.currentTarget);
 	},
