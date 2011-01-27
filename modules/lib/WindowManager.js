@@ -1,12 +1,12 @@
 /**
  * @fileOverview Window manager module for restartless addons
  * @author       SHIMODA "Piro" Hiroshi
- * @version      1
+ * @version      2
  *
  * @license
- *   The MIT License, Copyright (c) 2010 SHIMODA "Piro" Hiroshi.
- *   http://www.cozmixng.org/repos/piro/restartless-addon/trunk/license.txt
- * @url http://www.cozmixng.org/repos/piro/restartless-addon/trunk/
+ *   The MIT License, Copyright (c) 2010-2011 SHIMODA "Piro" Hiroshi.
+ *   https://github.com/piroor/restartless/blob/master/license.txt
+ * @url http://github.com/piroor/restartless
  */
 
 const EXPORTED_SYMBOLS = ['WindowManager'];
@@ -19,8 +19,16 @@ var _WindowMediator = Cc['@mozilla.org/appshell/window-mediator;1']
 var _gListener = {
 		observe : function(aSubject, aTopic, aData)
 		{
-			if (String(aSubject) == '[object ChromeWindow]' &&
-				aTopic == 'domwindowopened')
+			if (
+				aTopic == 'domwindowopened' &&
+				!aSubject
+					.QueryInterface(Ci.nsIInterfaceRequestor)
+					.getInterface(Ci.nsIWebNavigation)
+					.QueryInterface(Ci.nsIDocShell)
+					.QueryInterface(Ci.nsIDocShellTreeNode)
+					.QueryInterface(Ci.nsIDocShellTreeItem)
+					.parent
+				)
 				aSubject
 					.QueryInterface(Ci.nsIDOMWindow)
 					.addEventListener('DOMContentLoaded', this, false);
