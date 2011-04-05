@@ -1,5 +1,5 @@
-import('lib/WindowManager');
-import('autodisableime');
+load('lib/WindowManager');
+load('autodisableime');
 
 const TYPE_BROWSER = 'navigator:browser';
 
