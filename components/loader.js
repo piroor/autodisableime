@@ -1,7 +1,7 @@
 /**
  * @fileOverview Loader module for restartless addons
  * @author       SHIMODA "Piro" Hiroshi
- * @version      4
+ * @version      5
  *
  * @license
  *   The MIT License, Copyright (c) 2010-2011 SHIMODA "Piro" Hiroshi.
@@ -15,8 +15,15 @@ var _namespacePrototype = {
 		Ci : Components.interfaces,
 		Cu : Components.utils,
 		Cr : Components.results,
-		Application : Components.classes['@mozilla.org/fuel/application;1']
-						.getService(Components.interfaces.fuelIApplication)
+		Application : (
+			'@mozilla.org/fuel/application;1' in Components.classes ?
+				Components.classes['@mozilla.org/fuel/application;1']
+					.getService(Components.interfaces.fuelIApplication) :
+			'@mozilla.org/steel/application;1' in Components.classes ?
+				Components.classes['@mozilla.org/steel/application;1']
+					.getService(Components.interfaces.steelIApplication) :
+			null
+		)
 	};
 var _namespaces;
 
@@ -146,6 +153,33 @@ function exists(aPath, aBaseURI)
 	}
 }
 
+function doAndWait(aAsyncTask)
+{
+	const Cc = Components.classes;
+	const Ci = Components.interfaces;
+
+	var done = false;
+	var returnedValue = void(0);
+	var continuation = function(aReturnedValue) {
+			done = true;
+			returnedValue = aReturnedValue;
+		};
+
+	var timer = Cc['@mozilla.org/timer;1']
+					.createInstance(Ci.nsITimer);
+	timer.init(function() {
+		aAsyncTask(continuation);
+	}, 0, Ci.nsITimer.TYPE_ONE_SHOT);
+
+	var thread = Cc['@mozilla.org/thread-manager;1']
+					.getService(Ci.nsIThreadManager)
+					.currentThread;
+	while (!done) {
+		thread.processNextEvent(true);
+	}
+	return returnedValue;
+}
+
 function _createNamespace(aURISpec, aRoot)
 {
 	var baseURI = aURISpec.indexOf('file:') == 0 ?
@@ -209,6 +243,9 @@ function _createNamespace(aURISpec, aRoot)
 								IOService.newURI(aURISpec, null, null) ;
 				return base.resolve(aURISpec);
 			},
+			doAndWait : function(aAsyncTask) {
+				return doAndWait(aAsyncTask);
+			},
 			exports : {}
 		};
 	return ns;
@@ -267,7 +304,7 @@ function unregisterResource(aName)
 /** Handler for "install" of the bootstrap.js */
 function install(aReason)
 {
-	_callHandler('iustall', aReason);
+	_callHandler('install', aReason);
 }
 
 /** Handler for "uninstall" of the bootstrap.js */
