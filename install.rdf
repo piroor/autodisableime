@@ -6,7 +6,7 @@
                    em:id="autodisableime@piro.sakura.ne.jp"
                    em:name="Auto Disable IME"
                    em:version="0.2.2011082901"
-                   em:creator="SHIMODA Hiroshi"
+                   em:creator="YUKI &quot;Piro&quot; Hiroshi"
                    em:description="Makes IME disabled automatically."
                    em:homepageURL="http://piro.sakura.ne.jp/xul/autodisableime/"
                    em:bootstrap="true">
@@ -19,13 +19,17 @@
       <RDF:Description em:locale="en-US"
                        em:name="Auto Disable IME"
                        em:description="Makes IME disabled automatically."
-                       em:homepageURL="http://piro.sakura.ne.jp/xul/_autodisableime.html.en"/>
+                       em:homepageURL="http://piro.sakura.ne.jp/xul/_autodisableime.html.en">
+        <em:creator>YUKI "Piro" Hiroshi</em:creator>
+      </RDF:Description>
     </em:localized>
     <em:localized>
       <RDF:Description em:locale="ja"
                        em:name="IME自動無効 (Auto Disable IME)"
                        em:description="IMEを自動的に無効化します。"
-                       em:homepageURL="http://piro.sakura.ne.jp/xul/_autodisableime.html"/>
+                       em:homepageURL="http://piro.sakura.ne.jp/xul/_autodisableime.html">
+        <em:creator>YUKI "Piro" Hiroshi</em:creator>
+      </RDF:Description>
     </em:localized>
 
 
