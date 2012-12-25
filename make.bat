@@ -1,3 +1,3 @@
 copy buildscript\makexpi.sh .\
-bash makexpi.sh autodisableime version=0
+bash makexpi.sh -n autodisableime -o
 del makexpi.sh
