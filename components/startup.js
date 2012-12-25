@@ -12,7 +12,7 @@
 /** You must change ADDON_ID for your addon. */
 const ADDON_ID = 'restartless@piro.sakura.ne.jp';
 /** You must change CLASS_ID for your addon. If must be an UUID. */
-const CLASS_ID = '{db25fd30-e0fa-11df-85ca-0800200c9a66}';
+const CLASS_ID = '{2ba48940-e301-11df-85ca-0800200c9a66}';
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
