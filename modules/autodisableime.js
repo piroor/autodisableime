@@ -1,4 +1,12 @@
+load('lib/here');
+
 var EXPORTED_SYMBOLS = ['AutoDisableIME'];
+
+function shutdown()
+{
+	here = undefined;
+	AutoDisableIME = undefined;
+}
  
 function AutoDisableIME(aWindow) 
 {
@@ -9,7 +17,7 @@ AutoDisableIME.prototype = {
 	kINACTIVE : '_moz-autodisableime-inactive', 
 	kDISABLED : '_moz-autodisableime-disabled',
 
-	kCSSRules : <![CDATA[
+	kCSSRules : here(/*
 		@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 		@namespace html url("http://www.w3.org/1999/xhtml");
 
@@ -22,7 +30,7 @@ AutoDisableIME.prototype = {
 		*|*[_moz-autodisableime-disabled="true"]:not([focused="true"]) *|* {
 			ime-mode: disabled !important;
 		}
-	]]>.toString(),
+	*/),
  
 	get IMEAttribute() 
 	{
