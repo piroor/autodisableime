@@ -47,6 +47,11 @@ AutoDisableIME.prototype = {
 									.getService(Ci.nsIXULAppInfo)
 									.QueryInterface(Ci.nsIXULRuntime));
 	},
+
+	get MutationObserver()
+	{
+		return this._window.MutationObserver || this._window.MozMutationObserver;
+	},
  
 /* Utilities */ 
 	
@@ -55,6 +60,11 @@ AutoDisableIME.prototype = {
 		return this._window.document.getElementById('urlbar');
 	},
 	urlbarPopups : ['PopupAutoCompleteRichResult', 'PopupAutoComplete'],
+ 
+	get toolbox() 
+	{
+		return this._window.document.getElementById('navigator-toolbox');
+	},
   
 /* Initializing */ 
 	
@@ -65,7 +75,13 @@ AutoDisableIME.prototype = {
 
 		this.loadStyleSheet();
 		this._window.addEventListener('unload', this, false);
-		this._window.document.getElementById('navigator-toolbox').addEventListener('DOMAttrModified', this, false);
+
+		var self = this;
+		this.mutationObserver = new this.MutationObserver(function(aMutations, aObserver) {
+			self.handleMutations(aMutations, aObserver);
+		});
+		this.mutationObserver.observe(this.toolbox, { attributes : true });
+
 		this.initListeners();
 	},
  
@@ -73,7 +89,8 @@ AutoDisableIME.prototype = {
 	{
 		this.unloadStyleSheet();
 		this._window.removeEventListener('unload', this, false);
-		this._window.document.getElementById('navigator-toolbox').removeEventListener('DOMAttrModified', this, false);
+		this.mutationObserver.disconnect();
+		delete this.mutationObserver;
 		this.destroyListeners();
 		this._window = null;
 	},
@@ -194,12 +211,6 @@ AutoDisableIME.prototype = {
 			case 'unload':
 				return this.destroy();
 
-			case 'DOMAttrModified':
-				if (aEvent.originalTarget == aEvent.currentTarget &&
-					aEvent.attrName == 'customizing')
-					this.onToolboxCustomizingStateChanged(aEvent.newValue == 'true');
-				return;
-
 			case 'focus':
 				return this.onFieldFocus(aEvent);
 
@@ -212,6 +223,16 @@ AutoDisableIME.prototype = {
 			case 'popuphiding':
 				return this.onAutoCompleteHidden(aEvent);
 		}
+	},
+ 
+	handleMutations : function(aMutations, aObserver)
+	{
+		var target = this.toolbox;
+		aMutations.forEach(function(aMutation) {
+			if (aMutation.target == target &&
+				aMutation.attributeName == 'customizing')
+				this.onToolboxCustomizingStateChanged(aMutation.target.getAttribute(aMutation.attributeName) == 'true');
+		}, this);
 	}
   
 };
