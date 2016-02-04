@@ -1,6 +1,8 @@
 # History
 
  - master/HEAD
+ - 1.0.2016020502
+   * Marked as e10s compatible.
  - 1.0.2016020501
    * Works on Nightly 47.0a1.
    * Drop support for Firefox 37 and older.

@@ -5,7 +5,7 @@
   <RDF:Description RDF:about="urn:mozilla:install-manifest"
                    em:id="autodisableime@piro.sakura.ne.jp"
                    em:name="Auto Disable IME"
-                   em:version="1.0.2016020501"
+                   em:version="1.0.2016020502"
                    em:creator="YUKI &quot;Piro&quot; Hiroshi"
                    em:description="Makes IME disabled automatically."
                    em:homepageURL="http://piro.sakura.ne.jp/xul/autodisableime/"
